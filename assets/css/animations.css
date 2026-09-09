@@ -1,0 +1,292 @@
+/* =========================================================================
+   ANIMATIONS.CSS — Motion layer (Phase 4F, directional language)
+   Loaded AFTER main.css. NEVER duplicates main.css keyframes (blob/tilt/
+   wave/scroll/float/shimmer/parallax/pulse live there).
+   Architecture:
+     1. Motion tokens
+     2. Base transitions (shared [data-hover] transition)
+     3. Entrance primitives  (data-motion + .motion-play keyframes)
+     4. Ambient animations   (pause/refresh only; live in main.css)
+     5. Hover / micro-interactions
+     6. Mobile menu motion
+     7. Reduced-motion overrides
+   SAFETY: content is visible by default. [data-motion] does nothing until
+   JS adds .motion-play; the animation is a transient keyframe whose base
+   (non-animated) state is fully visible.
+   Pre-animation (hidden+offset) state for scroll-revealed [data-step]
+   elements is applied by main.js ONLY after the observer initializes —
+   inline styles, never a CSS default, and cleared on play (see main.js:
+   armElement / playMotion).
+   Motion language (4F): opacity + single-axis translation only. No blur.
+   Directions are read as ENTRANCE side: data-motion="left" travels right
+   (enters from the left), "right" travels left (enters from the right),
+   "up" rises from below, "scale" scales in from 0.98, "fade" is opacity
+   only. Single trigger via IntersectionObserver.
+   ========================================================================= */
+
+/* ============================ 1. TOKENS ============================ */
+:root {
+  --motion-duration-fast: 180ms;
+  --motion-duration-normal: 320ms;
+  --motion-duration-slow: 600ms;
+  --motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Travel distances per primitive */
+  --motion-up-y: 20px;
+  --motion-x: 20px;
+  --motion-scale-from: 0.98;
+
+  /* Duration hierarchy set per element via data-dur:
+     default (headings/major groups) = 600ms, normal = 560ms, fast = 450ms */
+  --motion-dur: var(--motion-duration-slow);
+}
+
+/* ========================= 2. BASE TRANSITIONS =========================
+   Comprehensive transition replace for hook targets so transform/shadow can
+   animate without clobbering existing Tailwind color/opacity transitions. */
+[data-hover] {
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    opacity var(--motion-duration-fast) var(--motion-ease-standard),
+    color var(--motion-duration-fast) var(--motion-ease-standard),
+    background-color var(--motion-duration-fast) var(--motion-ease-standard),
+    border-color var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-standard),
+    fill var(--motion-duration-fast) var(--motion-ease-standard),
+    stroke var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+/* ======================= 3. ENTRANCE PRIMITIVES ======================= */
+@keyframes motion-up {
+  from { opacity: 0; transform: translateY(var(--motion-up-y)); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes motion-left {
+  from { opacity: 0; transform: translateX(calc(-1 * var(--motion-x))); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes motion-right {
+  from { opacity: 0; transform: translateX(var(--motion-x)); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes motion-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes motion-scale {
+  from { opacity: 0; transform: scale(var(--motion-scale-from)); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* .motion-play is the ONLY entrance trigger. Base (without it) = visible. */
+[data-motion].motion-play {
+  animation-name: motion-up;
+  animation-duration: var(--motion-dur);
+  animation-timing-function: var(--motion-ease-emphasized);
+  animation-fill-mode: backwards;
+  animation-delay: var(--motion-delay, 0ms);
+}
+
+/* Duration tiers (metadata/items vs mid-groups vs headings/major groups) */
+[data-motion][data-dur="fast"].motion-play {
+  --motion-dur: 450ms;
+}
+[data-motion][data-dur="normal"].motion-play {
+  --motion-dur: 560ms;
+}
+
+/* Direction variants */
+[data-motion="up"].motion-play {
+  animation-name: motion-up;
+}
+[data-motion="left"].motion-play {
+  animation-name: motion-left;
+}
+[data-motion="right"].motion-play {
+  animation-name: motion-right;
+}
+[data-motion="fade"].motion-play {
+  animation-name: motion-fade;
+}
+[data-motion="scale"].motion-play {
+  animation-name: motion-scale;
+}
+
+/* Experience bullets travel slightly less than the 20px standard */
+.group[data-motion="left"] {
+  --motion-x: 14px;
+}
+
+/* ======================= 4. AMBIENT =========================
+   Ambient keyframes (blob / float / scroll / wave / pulse) are owned by
+   main.css — do not re-declare. This file only pauses/resets them. */
+
+/* Ticker pauses cleanly on hover (no jump — pause, not reset). */
+[data-hover~="marquee"]:hover .animate-scroll {
+  animation-play-state: paused;
+}
+
+/* ===================== 5. HOVER / MICRO-INTERACTIONS ===================== */
+
+/* Resume CTA — 1px lift, no shadow; download icon nudges down */
+[data-hover~="cta"]:hover {
+  transform: translateY(-1px);
+}
+[data-hover~="cta"] svg {
+  transition: transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+[data-hover~="cta"]:hover svg {
+  transform: translateY(3px);
+}
+
+/* Social icons — 1px lift, minimal */
+[data-hover~="social"]:hover {
+  transform: translateY(-1px);
+}
+
+/* Project blocks — quiet 1px lift, no shadow */
+[data-hover~="project"]:hover {
+  transform: translateY(-1px);
+}
+/* Arrow/icon inside the round GitHub button moves toward the link */
+[data-hover~="project"] .rounded-full.group svg {
+  transition: transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+[data-hover~="project"]:hover .rounded-full.group svg {
+  transform: translate(3px, -3px);
+}
+
+/* Contact method rows — reference-style: soft light background reveals
+   behind the whole row with a subtle 2px nudge. No shadow, no lift.
+   Background eases in slower than the nudge for a calm reveal. */
+[data-hover~="contact"] {
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-emphasized),
+    background-color 260ms var(--motion-ease-standard);
+}
+[data-hover~="contact"]:hover {
+  transform: translateX(10px);
+  background-color: #f9fafb;
+}
+
+/* Global press-down for every button/CTA (instant, tactile) */
+button:active,
+a[href]:active {
+  transform: translateY(1px);
+}
+
+/* Desktop nav links — fast underline reveal, no movement */
+.hidden.md\:flex a,
+.hidden.md\:block > a {
+  position: relative;
+  text-decoration: none;
+}
+.hidden.md\:flex a::after,
+.hidden.md\:block > a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+.hidden.md\:flex a:hover::after,
+.hidden.md\:block > a:hover::after {
+  transform: scaleX(1);
+}
+
+/* ======================== 6. MOBILE MENU =========================
+   The hidden-base state only exists after JS adds .menu-init (plain class
+   toggle otherwise unchanged). If JS fails, .menu-init is never added and
+   the menu opens as a plain visible toggle — correctness preserved. */
+#mobile-menu.menu-init {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+  visibility: hidden;
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    visibility 0s linear var(--motion-duration-fast);
+}
+#mobile-menu.menu-init.menu-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+/* Items stagger only into view; never hidden in the plain state */
+#mobile-menu.menu-init a {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    color 150ms var(--motion-ease-standard),
+    background-color 150ms var(--motion-ease-standard);
+}
+#mobile-menu.menu-init.menu-open a {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: var(--menu-delay, 0ms);
+}
+
+/* ===================== 7. REDUCED MOTION ===================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Stop all continuous ambient/decorative motion */
+  .animate-blob,
+  .animate-float,
+  .animate-scroll,
+  .animate-pulse,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+  /* Entrance classes become inert: force the visible, unfiltered end state */
+  [data-motion],
+  .motion-play {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+  /* Hover micro-interactions and menu animation are suppressed */
+  [data-hover]:hover,
+  [data-hover]:active {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  #mobile-menu.menu-init,
+  #mobile-menu.menu-init a {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+    transition: none !important;
+  }
+  .hidden.md\:flex a,
+  .hidden.md\:block > a {
+    text-decoration: none !important;
+  }
+  .hidden.md\:flex a::after,
+  .hidden.md\:block > a::after {
+    display: none !important;
+  }
+}

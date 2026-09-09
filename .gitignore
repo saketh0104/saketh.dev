@@ -1,0 +1,6 @@
+.env
+_reference/**
+*.md
+!README.md
+
+*.pdf
