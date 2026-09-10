@@ -4,3 +4,4 @@ _reference/**
 !README.md
 
 *.pdf
+.vercel
