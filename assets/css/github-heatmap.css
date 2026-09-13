@@ -43,7 +43,7 @@
   border-radius: 2px;
 }
 
-.gh-cell.l0 { background: #eceef1; }
+.gh-cell.l0 { background: #e2e8f0; }
 .gh-cell.l1 { background: #ddd6fe; }
 .gh-cell.l2 { background: #c4b5fd; }
 .gh-cell.l3 { background: #a78bfa; }
@@ -70,7 +70,7 @@
   display: inline-block;
 }
 
-.gh-square.l0 { background: #eceef1; }
+.gh-square.l0 { background: #e2e8f0; }
 .gh-square.l1 { background: #ddd6fe; }
 .gh-square.l2 { background: #c4b5fd; }
 .gh-square.l3 { background: #a78bfa; }
