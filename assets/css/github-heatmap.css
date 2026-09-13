@@ -1,0 +1,89 @@
+/* GitHub contribution heatmap — portfolio integration (purple accent) */
+
+#github-heatmap {
+  overflow: hidden;
+}
+
+.gh-caption {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.gh-months {
+  display: grid;
+  grid-template-columns: repeat(53, 1fr);
+  column-gap: 3px;
+  margin-bottom: 3px;
+  overflow: visible;
+}
+
+.gh-months > div {
+  overflow: visible;
+  text-align: center;
+}
+
+.gh-month {
+  display: inline-block;
+  font-size: 10px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.gh-grid {
+  display: grid;
+  grid-template-columns: repeat(53, 1fr);
+  gap: 3px;
+  overflow: visible;
+}
+
+.gh-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 2px;
+}
+
+.gh-cell.l0 { background: #eceef1; }
+.gh-cell.l1 { background: #ddd6fe; }
+.gh-cell.l2 { background: #c4b5fd; }
+.gh-cell.l3 { background: #a78bfa; }
+.gh-cell.l4 { background: #7c3aed; }
+
+.gh-legend {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.gh-legend span {
+  margin: 0 4px;
+}
+
+.gh-square {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.gh-square.l0 { background: #eceef1; }
+.gh-square.l1 { background: #ddd6fe; }
+.gh-square.l2 { background: #c4b5fd; }
+.gh-square.l3 { background: #a78bfa; }
+.gh-square.l4 { background: #7c3aed; }
+
+@media (max-width: 520px) {
+  .gh-months {
+    column-gap: 2px;
+  }
+  .gh-grid {
+    gap: 2px;
+  }
+  .gh-month {
+    font-size: 8px;
+  }
+}
