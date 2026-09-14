@@ -1,0 +1,214 @@
+/* ============================================================
+   PRESENCE.CSS — editorial social columns (LinkedIn / X)
+   Two open columns read as ONE composition: generous whitespace,
+   hairline separators, a single thin vertical divider on desktop.
+   No cards, no fills, no radial wash. Consumes the motion tokens
+   + reduced-motion behavior from animations.css ([data-hover]).
+   ============================================================ */
+
+.presence-editorial {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+  margin-top: 64px;
+}
+
+@media (min-width: 768px) {
+  .presence-editorial {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px;
+  }
+}
+
+.presence-entry {
+  --presence-accent: #0a66c2;
+  min-width: 0;
+  transition: transform var(--motion-duration-fast) var(--motion-ease-emphasized);
+}
+.presence-entry--x {
+  --presence-accent: #111827;
+}
+
+.presence-entry:hover {
+  transform: translateY(-1px);
+}
+
+/* Divider: thin vertical line on desktop, horizontal line under
+   the X column on mobile. */
+.presence-entry--x {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 32px;
+}
+@media (min-width: 768px) {
+  .presence-entry--x {
+    border-top: 0;
+    padding-top: 0;
+    border-left: 1px solid #e5e7eb;
+    padding-left: 48px;
+  }
+}
+
+.presence-entry-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+}
+
+/* Brand row — accurate margins, clean hairline below */
+.presence-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.presence-head-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.presence-logo {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  color: var(--presence-accent);
+  transition: transform var(--motion-duration-normal) var(--motion-ease-emphasized);
+}
+.presence-entry:hover .presence-logo {
+  transform: translateX(2px);
+}
+
+.presence-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.presence-platform {
+  font-weight: 600;
+  font-size: 15px;
+  color: #111827;
+}
+.presence-source {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.presence-arrow {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #9ca3af;
+  transition:
+    transform var(--motion-duration-normal) var(--motion-ease-standard),
+    color var(--motion-duration-normal) var(--motion-ease-standard);
+}
+.presence-entry:hover .presence-arrow {
+  transform: translate(2px, -2px);
+  color: var(--presence-accent);
+}
+
+/* Typography — strong hierarchy, no card container */
+.presence-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.presence-title {
+  position: relative;
+  display: inline-block;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+  transition: color var(--motion-duration-normal) var(--motion-ease-standard);
+}
+.presence-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--presence-accent), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-duration-slow) var(--motion-ease-emphasized);
+}
+.presence-entry:hover .presence-title {
+  color: var(--presence-accent);
+}
+.presence-entry:hover .presence-title::after {
+  transform: scaleX(1);
+}
+
+.presence-context {
+  font-size: 15px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+.presence-date {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 14px;
+}
+.presence-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #4b5563;
+}
+
+/* Recognition details — subtle ruled rows */
+.presence-spec {
+  margin-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+.presence-spec-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.presence-spec-row dt {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+.presence-spec-row dd {
+  min-width: 0;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  overflow-wrap: break-word;
+}
+
+/* X side note — honest placeholder */
+.presence-note {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+.presence-note-label {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+.presence-note-text {
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.6;
+  color: #6b7280;
+}
