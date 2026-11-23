@@ -50,6 +50,14 @@
   border-bottom: 1px solid #f3f4f6;
 }
 
+/* Real project image fills the media slot */
+.project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* Placeholder mark — clean geometric stand-in, never a fake image */
 .project-placeholder {
   position: absolute;
